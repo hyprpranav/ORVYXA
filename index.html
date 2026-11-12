@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORVYXA | Autonomous Spacecraft Monitoring Dashboard</title>
+  <meta name="description" content="Futuristic Autonomous Spacecraft Monitoring Dashboard for ORVYXA with USB Web Serial Telemetry.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Dynamic Animated Starfield & Nebula Canvas -->
+  <canvas id="space-canvas" aria-hidden="true"></canvas>
+
+  <!-- Deep Space Ambient Backdrop with SVG Moon & Orbit Track -->
+  <div class="space-backdrop" aria-hidden="true">
+    <!-- Glowing Lunar Body -->
+    <div class="lunar-orb">
+      <svg class="moon-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#d4eaf7" stop-opacity="0.95"/>
+            <stop offset="65%" stop-color="#7389a8" stop-opacity="0.7"/>
+            <stop offset="90%" stop-color="#344865" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#141c2e" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="craterShade" cx="40%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#1e293b" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9"/>
+          </radialGradient>
+          <filter id="coronaBlur" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="16" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+        <!-- Lunar Corona -->
+        <circle cx="160" cy="160" r="140" fill="url(#moonGlow)" filter="url(#coronaBlur)"/>
+        <!-- Moon Surface Sphere -->
+        <circle cx="160" cy="160" r="120" fill="#cbd5e1" class="moon-sphere"/>
+        <!-- Mare & Crater Formations -->
+        <path d="M120 80 Q150 95 180 85 Q210 100 200 130 Q170 145 130 120 Z" fill="#94a3b8" opacity="0.45"/>
+        <path d="M90 140 Q130 160 160 145 Q190 175 160 210 Q110 220 85 180 Z" fill="#64748b" opacity="0.4"/>
+        <path d="M180 180 Q220 170 240 200 Q230 230 190 225 Z" fill="#94a3b8" opacity="0.35"/>
+        <circle cx="110" cy="110" r="14" fill="url(#craterShade)" opacity="0.5"/>
+        <circle cx="215" cy="125" r="9" fill="url(#craterShade)" opacity="0.4"/>
+        <circle cx="145" cy="195" r="18" fill="url(#craterShade)" opacity="0.45"/>
+        <circle cx="185" cy="155" r="7" fill="url(#craterShade)" opacity="0.35"/>
+        <circle cx="120" cy="230" r="11" fill="url(#craterShade)" opacity="0.4"/>
+        <!-- Soft Shadow Terminator for realistic planetary depth -->
+        <path d="M160 40 A120 120 0 0 0 160 280 A80 120 0 0 1 160 40" fill="#090d16" opacity="0.45"/>
+      </svg>
+    </div>
+
+    <!-- Spacecraft / Satellite Illustration with Orbit Vector -->
+    <div class="spacecraft-vector-layer">
+      <svg class="satellite-svg" viewBox="0 0 360 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Solar Panel Left -->
+        <g class="solar-wing-left">
+          <rect x="20" y="95" width="90" height="70" rx="4" fill="#0f2b48" stroke="#00f0ff" stroke-width="1.5" stroke-opacity="0.8"/>
+          <line x1="50" y1="95" x2="50" y2="165" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <line x1="80" y1="95" x2="80" y2="165" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <line x1="20" y1="118" x2="110" y2="118" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <line x1="20" y1="142" x2="110" y2="142" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <!-- Solar cell glow -->
+          <rect x="25" y="100" width="80" height="60" fill="#00d2ff" fill-opacity="0.08"/>
+          <!-- Wing strut -->
+          <rect x="110" y="125" width="25" height="10" fill="#64748b" stroke="#38bdf8"/>
+        </g>
+        <!-- Spacecraft Central Bus Core -->
+        <g class="craft-core">
+          <!-- Main Chassis -->
+          <polygon points="135,100 170,80 205,100 205,160 170,180 135,160" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+          <polygon points="145,107 170,92 195,107 195,153 170,168 145,153" fill="#0f172a" stroke="#818cf8" stroke-width="1.2"/>
+          <!-- Avionics Core Glass & Sensor Window -->
+          <circle cx="170" cy="130" r="16" fill="#0284c7" stroke="#00f0ff" stroke-width="2"/>
+          <circle cx="170" cy="130" r="8" fill="#38bdf8" class="pulse-beacon"/>
+          <!-- High Gain Antenna Dish -->
+          <path d="M170 80 L170 50 M145 42 Q170 28 195 42" stroke="#e2e8f0" stroke-width="2" fill="none"/>
+          <circle cx="170" cy="36" r="3" fill="#00f0ff"/>
+          <!-- Communication Telemetry Waves -->
+          <path class="signal-wave w1" d="M152 24 Q170 12 188 24" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="2 2" fill="none"/>
+          <path class="signal-wave w2" d="M140 14 Q170 -2 200 14" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+          <!-- Thruster Bell & Ion Plume -->
+          <polygon points="160,180 180,180 185,195 155,195" fill="#475569" stroke="#94a3b8"/>
+          <polygon points="162,195 178,195 170,225" fill="url(#ionPlume)" class="ion-exhaust"/>
+        </g>
+        <!-- Solar Panel Right -->
+        <g class="solar-wing-right">
+          <rect x="205" y="125" width="25" height="10" fill="#64748b" stroke="#38bdf8"/>
+          <rect x="230" y="95" width="90" height="70" rx="4" fill="#0f2b48" stroke="#00f0ff" stroke-width="1.5" stroke-opacity="0.8"/>
+          <line x1="260" y1="95" x2="260" y2="165" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <line x1="290" y1="95" x2="290" y2="165" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <line x1="230" y1="118" x2="320" y2="118" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <line x1="230" y1="142" x2="320" y2="142" stroke="#00f0ff" stroke-opacity="0.4"/>
+          <rect x="235" y="100" width="80" height="60" fill="#00d2ff" fill-opacity="0.08"/>
+        </g>
+        <defs>
+          <linearGradient id="ionPlume" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9"/>
+            <stop offset="40%" stop-color="#818cf8" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- HUD Grid Coordinates and Orbital Guide Lines -->
+    <div class="hud-orbit-ring" aria-hidden="true"></div>
+  </div>
+
+  <!-- Primary Application Wrapper -->
+  <div class="app-layout">
+
+    <!-- 1. HEADER SECTION -->
+    <header class="mission-header">
+      <div class="header-left">
+        <div class="insignia-box">
+          <svg class="insignia-icon" viewBox="0 0 48 48" fill="none">
+            <polygon points="24,4 44,40 4,40" stroke="#00f0ff" stroke-width="2.5" fill="rgba(0, 240, 255, 0.08)"/>
+            <circle cx="24" cy="26" r="8" stroke="#818cf8" stroke-width="2" fill="none"/>
+            <line x1="24" y1="10" x2="24" y2="38" stroke="#00ffcc" stroke-width="1.5"/>
+            <line x1="12" y1="26" x2="36" y2="26" stroke="#00ffcc" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="title-meta">
+          <div class="title-wrapper">
+            <h1 class="project-title">ORVYXA</h1>
+            <span class="project-badge">SPACE v2.4</span>
+          </div>
+          <p class="project-subtitle">AUTONOMOUS SPACECRAFT MONITORING SYSTEM</p>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="header-nav" aria-label="System Navigation">
+        <a href="#overview" class="nav-item active">Dashboard</a>
+        <a href="#telemetry" class="nav-item">Live Telemetry</a>
+        <a href="#health" class="nav-item">System Status</a>
+        <a href="#terminal" class="nav-item">Serial Log</a>
+      </nav>
+
+      <!-- USB Connection Control Panel -->
+      <div class="header-controls">
+        <!-- Live Connection Status Pill -->
+        <div class="connection-pill status-disconnected" id="conn-status-pill">
+          <span class="pulse-dot"></span>
+          <span class="status-label" id="conn-status-text">DISCONNECTED</span>
+          <span class="baud-tag" id="baud-tag">115200 BAUD</span>
+        </div>
+
+        <!-- Primary Action Buttons -->
+        <div class="action-btn-group">
+          <button id="btn-connect" class="btn btn-connect" title="Select and connect ESP32 over USB Web Serial">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            <span>CONNECT ESP32</span>
+          </button>
+
+          <button id="btn-disconnect" class="btn btn-disconnect hidden" title="Disconnect ESP32 Serial Port">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            <span>DISCONNECT</span>
+          </button>
+
+          <!-- Simulation / Demo Mode Toggle -->
+          <button id="btn-demo-toggle" class="btn btn-demo" title="Toggle Simulated Telemetry for testing without hardware">
+            <span class="demo-indicator"></span>
+            <span>SIMULATOR MODE</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sub-Header Mission Info Ribbon -->
+    <div class="mission-ribbon">
+      <div class="ribbon-metric">
+        <span class="r-label">MISSION STATUS:</span>
+        <span class="r-val highlight-cyan" id="mission-mode-indicator">SYSTEM STANDBY</span>
+      </div>
+      <div class="ribbon-metric">
+        <span class="r-label">MISSION ELAPSED TIME:</span>
+        <span class="r-val font-mono" id="met-clock">00:00:00:00</span>
+      </div>
+      <div class="ribbon-metric">
+        <span class="r-label">LAST SERIAL PACKET:</span>
+        <span class="r-val font-mono" id="last-update-time">--:--:--</span>
+      </div>
+      <div class="ribbon-metric">
+        <span class="r-label">PACKETS INGESTED:</span>
+        <span class="r-val font-mono" id="packet-counter">0</span>
+      </div>
+      <div class="ribbon-metric audio-ctrl">
+        <button id="btn-audio-toggle" class="audio-toggle-btn" title="Toggle Telemetry Beeps">
+          <span id="audio-icon">🔊</span> AUDIO: <span id="audio-state-text">OFF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Web Serial Browser Warning Banner (Auto-hidden if supported) -->
+    <div id="browser-warning-banner" class="browser-warning hidden">
+      <span class="warn-icon">⚠️</span>
+      <div class="warn-text">
+        <strong>Browser Web Serial API Notice:</strong> Your current browser does not fully support the native Web Serial API.
+        For live ESP32 USB telemetry, please use <strong>Google Chrome</strong> or <strong>Microsoft Edge</strong>. 
+        You can still use <strong>SIMULATOR MODE</strong> above to explore full dashboard capabilities.
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="dashboard-grid" id="overview">
+
+      <!-- ========================================== -->
+      <!-- 6. SPACECRAFT HEALTH & SYSTEM STATUS MATRIX -->
+      <!-- ========================================== -->
+      <section class="section-card health-matrix-section" id="health">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="hud-bracket">[</span>
+            <h2>SPACECRAFT HEALTH STATUS MATRIX</h2>
+            <span class="hud-bracket">]</span>
+          </div>
+          <div class="status-legend">
+            <span class="legend-chip"><span class="chip-dot dot-normal"></span> NORMAL</span>
+            <span class="legend-chip"><span class="chip-dot dot-warning"></span> WARNING</span>
+            <span class="legend-chip"><span class="chip-dot dot-critical"></span> CRITICAL</span>
+            <span class="legend-chip"><span class="chip-dot dot-disconnected"></span> NOT CONNECTED</span>
+          </div>
+        </div>
+
+        <div class="health-cards-grid">
+          <!-- 1. Temperature Status -->
+          <div class="health-card" id="health-card-temp">
+            <div class="health-top">
+              <span class="health-name">THERMAL SUBSYSTEM</span>
+              <span class="health-badge badge-grey" id="badge-temp-status">NOT CONNECTED</span>
+            </div>
+            <div class="health-sensor-id">DHT11 SENSOR • GPIO 4</div>
+            <div class="health-detail" id="health-temp-detail">Awaiting live telemetry from thermal sensor probe</div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill" id="bar-temp" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- 2. Power Status -->
+          <div class="health-card" id="health-card-power">
+            <div class="health-top">
+              <span class="health-name">EPS POWER BUS</span>
+              <span class="health-badge badge-grey" id="badge-power-status">NOT CONNECTED</span>
+            </div>
+            <div class="health-sensor-id">INA219 SENSOR • I2C (0x40)</div>
+            <div class="health-detail" id="health-power-detail">Electrical bus voltage and load monitoring idle</div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill" id="bar-power" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- 3. Communication Status -->
+          <div class="health-card" id="health-card-comm">
+            <div class="health-top">
+              <span class="health-name">DOWNLINK TELEMETRY</span>
+              <span class="health-badge badge-grey" id="badge-comm-status">NOT CONNECTED</span>
+            </div>
+            <div class="health-sensor-id">USB SERIAL LINK • 115200 BPS</div>
+            <div class="health-detail" id="health-comm-detail">Hardware serial stream disconnected</div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill" id="bar-comm" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- 4. Ultrasonic Status -->
+          <div class="health-card" id="health-card-sonar">
+            <div class="health-top">
+              <span class="health-name">PROXIMITY RADAR</span>
+              <span class="health-badge badge-grey" id="badge-sonar-status">NOT CONNECTED</span>
+            </div>
+            <div class="health-sensor-id">HC-SR04 • TRIG 5 / ECHO 18</div>
+            <div class="health-detail" id="health-sonar-detail">Docking radar and obstacle telemetry standby</div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill" id="bar-sonar" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- 5. MPU6050 Status -->
+          <div class="health-card" id="health-card-mpu">
+            <div class="health-top">
+              <span class="health-name">INERTIAL GUIDANCE (IMU)</span>
+              <span class="health-badge badge-warning" id="badge-mpu-status">I2C FAULT / SIMULATED</span>
+            </div>
+            <div class="health-sensor-id">MPU6050 • HARDWARE I2C ISSUE</div>
+            <div class="health-detail" id="health-mpu-detail">Hardware fault detected on I2C bus; synthetic gyro vector active</div>
+            <div class="health-bar-track">
+              <div class="health-bar-fill warning-fill" id="bar-mpu" style="width: 75%;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 5. LIVE TELEMETRY DASHBOARD - SENSOR CARDS -->
+      <!-- ========================================== -->
+      <section class="section-card telemetry-section" id="telemetry">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="hud-bracket">[</span>
+            <h2>LIVE SPACECRAFT TELEMETRY</h2>
+            <span class="hud-bracket">]</span>
+          </div>
+          <div class="live-pulse-badge">
+            <span class="pulse-ring"></span>
+            <span>REAL-TIME SENSOR CHANNELS</span>
+          </div>
+        </div>
+
+        <div class="telemetry-grid">
+
+          <!-- A. DHT11 SENSOR (Temperature & Humidity) -->
+          <div class="telemetry-card card-dht11">
+            <div class="card-glass-glow"></div>
+            <div class="card-header">
+              <div class="sensor-title">
+                <span class="sensor-tag">ACTUAL HARDWARE</span>
+                <h3>DHT11 SENSOR</h3>
+                <span class="sub-label">Environmental Cabin Control • GPIO 4</span>
+              </div>
+              <div class="sensor-icon-box">🌡️</div>
+            </div>
+
+            <div class="metric-dual-row">
+              <!-- Temperature -->
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">TEMPERATURE</span>
+                  <span class="range-hint">Target: 18 - 28 °C</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val" id="val-temp">--.-</span>
+                  <span class="metric-unit">°C</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div class="gauge-bar" id="gauge-temp" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>State: <strong id="state-temp" class="text-dim">STANDBY</strong></span>
+                  <span id="temp-f-equiv">--.- °F</span>
+                </div>
+              </div>
+
+              <!-- Humidity -->
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">HUMIDITY</span>
+                  <span class="range-hint">Nominal: 30 - 65 %</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val" id="val-hum">--.-</span>
+                  <span class="metric-unit">%</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div class="gauge-bar cyan-fill" id="gauge-hum" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>Moisture Index: <strong id="state-hum" class="text-dim">NORMAL</strong></span>
+                  <span id="dewpoint-calc">Dew: -- °C</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini Sparkline Canvas for DHT11 -->
+            <div class="sparkline-container">
+              <div class="sparkline-title">THERMAL STABILITY WAVEFORM (60s)</div>
+              <canvas id="chart-dht" class="sparkline-canvas" width="400" height="75"></canvas>
+            </div>
+          </div>
+
+          <!-- B. INA219 SENSOR (Voltage, Current, Power) -->
+          <div class="telemetry-card card-ina219">
+            <div class="card-glass-glow"></div>
+            <div class="card-header">
+              <div class="sensor-title">
+                <span class="sensor-tag">ACTUAL HARDWARE</span>
+                <h3>INA219 HIGH-SIDE MONITOR</h3>
+                <span class="sub-label">Electrical Power System (EPS) • I2C (0x40)</span>
+              </div>
+              <div class="sensor-icon-box">⚡</div>
+            </div>
+
+            <div class="metric-triple-row">
+              <!-- Voltage -->
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">DC BUS VOLTAGE</span>
+                  <span class="range-hint">Bus: 0 - 5.0 V</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val highlight-gold" id="val-volt">-.--</span>
+                  <span class="metric-unit">V</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div class="gauge-bar gold-fill" id="gauge-volt" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>Supply Bus: <strong id="state-volt" class="text-dim">OFFLINE</strong></span>
+                </div>
+              </div>
+
+              <!-- Current -->
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">DRAW CURRENT</span>
+                  <span class="range-hint">Nominal: &lt; 500 mA</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val highlight-purple" id="val-curr">---.-</span>
+                  <span class="metric-unit">mA</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div class="gauge-bar purple-fill" id="gauge-curr" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>Load Rate: <strong id="state-curr" class="text-dim">OFFLINE</strong></span>
+                </div>
+              </div>
+
+              <!-- Power -->
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">POWER CONSUMPTION</span>
+                  <span class="range-hint">Peak: 3000 mW</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val highlight-cyan" id="val-pwr">----.-</span>
+                  <span class="metric-unit">mW</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div class="gauge-bar cyan-fill" id="gauge-pwr" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>Total Draw: <strong id="state-pwr" class="text-dim">0.00 W</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini Sparkline Canvas for Power Bus -->
+            <div class="sparkline-container">
+              <div class="sparkline-title">VOLTAGE & POWER LOAD TRENDLINE (60s)</div>
+              <canvas id="chart-power" class="sparkline-canvas" width="400" height="75"></canvas>
+            </div>
+          </div>
+
+          <!-- C. HC-SR04 ULTRASONIC SENSOR (Distance & Proximity) -->
+          <div class="telemetry-card card-sonar">
+            <div class="card-glass-glow"></div>
+            <div class="card-header">
+              <div class="sensor-title">
+                <span class="sensor-tag">ACTUAL HARDWARE</span>
+                <h3>HC-SR04 ULTRASONIC RADAR</h3>
+                <span class="sub-label">Autonomous Docking & Collision Rangefinder</span>
+              </div>
+              <div class="sensor-icon-box">📡</div>
+            </div>
+
+            <div class="sonar-content-layout">
+              <div class="sonar-readings">
+                <div class="metric-top">
+                  <span class="metric-name">PROXIMITY DISTANCE</span>
+                  <span class="range-hint">Effective: 2 - 400 cm</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val highlight-emerald" id="val-dist">---.-</span>
+                  <span class="metric-unit">cm</span>
+                </div>
+                <div class="proximity-status-box" id="box-sonar-status">
+                  <span class="status-shield-icon">🛡️</span>
+                  <div class="shield-text">
+                    <span class="sub-lead">RANGE ASSESSMENT:</span>
+                    <strong id="val-dist-status">AWAITING SONAR ECHO</strong>
+                  </div>
+                </div>
+
+                <div class="gauge-bar-wrapper mt-3">
+                  <div class="gauge-bar emerald-fill" id="gauge-dist" style="width: 0%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>Relative Range: <span id="dist-inch-equiv">--.- in</span></span>
+                  <span>ECHO PIN: 18 / TRIG: 5</span>
+                </div>
+              </div>
+
+              <!-- Animated Proximity Radar Sweep Visualizer -->
+              <div class="radar-visualizer-box">
+                <div class="radar-scope">
+                  <div class="radar-sweep-beam"></div>
+                  <div class="radar-ring r1"></div>
+                  <div class="radar-ring r2"></div>
+                  <div class="radar-ring r3"></div>
+                  <div class="radar-cross-h"></div>
+                  <div class="radar-cross-v"></div>
+                  <div class="radar-blip" id="radar-target-blip"></div>
+                </div>
+                <div class="radar-caption">RANGE VECTOR SCANNER</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- D. MPU6050 INERTIAL MEASUREMENT UNIT (SIMULATED DATA NOTICE) -->
+          <div class="telemetry-card card-mpu simulated-card">
+            <div class="card-glass-glow"></div>
+            <div class="simulated-ribbon">
+              <span class="sim-badge">⚠️ SIMULATED DATA</span>
+              <span class="sim-reason">HARDWARE I2C FAULT - FALLBACK ACTIVE</span>
+            </div>
+
+            <div class="card-header">
+              <div class="sensor-title">
+                <h3>MPU6050 6-AXIS IMU</h3>
+                <span class="sub-label">Orbital Attitude & Kinetic Angular Velocity</span>
+              </div>
+              <div class="sensor-icon-box">🛰️</div>
+            </div>
+
+            <div class="imu-content-layout">
+              <!-- Accelerometer Vector (X, Y, Z) -->
+              <div class="imu-group">
+                <div class="imu-group-header">
+                  <span>ACCELERATION (G-FORCE)</span>
+                  <span class="sim-tag">SIMULATED</span>
+                </div>
+                <div class="axis-bars-list">
+                  <div class="axis-row">
+                    <span class="axis-label">ACCEL X</span>
+                    <div class="axis-bar-track">
+                      <div class="axis-bar-fill" id="bar-accel-x" style="width: 50%;"></div>
+                    </div>
+                    <span class="axis-val font-mono" id="val-acc-x">+0.02 g</span>
+                  </div>
+                  <div class="axis-row">
+                    <span class="axis-label">ACCEL Y</span>
+                    <div class="axis-bar-track">
+                      <div class="axis-bar-fill" id="bar-accel-y" style="width: 50%;"></div>
+                    </div>
+                    <span class="axis-val font-mono" id="val-acc-y">-0.01 g</span>
+                  </div>
+                  <div class="axis-row">
+                    <span class="axis-label">ACCEL Z</span>
+                    <div class="axis-bar-track">
+                      <div class="axis-bar-fill" id="bar-accel-z" style="width: 75%;"></div>
+                    </div>
+                    <span class="axis-val font-mono" id="val-acc-z">+0.98 g</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gyroscope Angular Rate (X, Y, Z) -->
+              <div class="imu-group">
+                <div class="imu-group-header">
+                  <span>GYROSCOPE (ANGULAR RATE)</span>
+                  <span class="sim-tag">SIMULATED</span>
+                </div>
+                <div class="axis-bars-list">
+                  <div class="axis-row">
+                    <span class="axis-label">ROLL (X)</span>
+                    <div class="axis-bar-track">
+                      <div class="axis-bar-fill purple-fill" id="bar-gyro-x" style="width: 48%;"></div>
+                    </div>
+                    <span class="axis-val font-mono" id="val-gyro-x">-0.15 °/s</span>
+                  </div>
+                  <div class="axis-row">
+                    <span class="axis-label">PITCH (Y)</span>
+                    <div class="axis-bar-track">
+                      <div class="axis-bar-fill purple-fill" id="bar-gyro-y" style="width: 52%;"></div>
+                    </div>
+                    <span class="axis-val font-mono" id="val-gyro-y">+0.22 °/s</span>
+                  </div>
+                  <div class="axis-row">
+                    <span class="axis-label">YAW (Z)</span>
+                    <div class="axis-bar-track">
+                      <div class="axis-bar-fill purple-fill" id="bar-gyro-z" style="width: 50%;"></div>
+                    </div>
+                    <span class="axis-val font-mono" id="val-gyro-z">+0.04 °/s</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Synthetic 3D Spacecraft Attitude Gimbal Visualizer -->
+              <div class="gimbal-box">
+                <div class="gimbal-horizon" id="gimbal-horizon">
+                  <div class="pitch-ladder"></div>
+                  <div class="roll-pointer"></div>
+                </div>
+                <div class="gimbal-caption">ATTITUDE DIRECTOR (SIMULATED)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- E. CABIN PRESSURE SENSOR (SIMULATED DATA NOTICE) -->
+          <div class="telemetry-card card-pressure simulated-card">
+            <div class="card-glass-glow"></div>
+            <div class="simulated-ribbon">
+              <span class="sim-badge">⚠️ SIMULATED DATA</span>
+              <span class="sim-reason">NO PHYSICAL SENSOR CONNECTED</span>
+            </div>
+
+            <div class="card-header">
+              <div class="sensor-title">
+                <h3>CABIN BAROMETRIC PRESSURE</h3>
+                <span class="sub-label">Life Support Environmental Pressure Model</span>
+              </div>
+              <div class="sensor-icon-box">🧭</div>
+            </div>
+
+            <div class="metric-dual-row">
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">CABIN PRESSURE</span>
+                  <span class="range-hint">Nominal: 101.3 kPa</span>
+                </div>
+                <div class="metric-display">
+                  <span class="metric-val highlight-cyan font-mono" id="val-press">101.32</span>
+                  <span class="metric-unit">kPa</span>
+                </div>
+                <div class="gauge-bar-wrapper">
+                  <div class="gauge-bar cyan-fill" id="gauge-press" style="width: 82%;"></div>
+                </div>
+                <div class="metric-footnote">
+                  <span>Equiv: <strong id="val-press-hpa">1013.2 hPa</strong></span>
+                  <span>1.000 ATM</span>
+                </div>
+              </div>
+
+              <div class="metric-cell">
+                <div class="metric-top">
+                  <span class="metric-name">PRESSURE INTEGRITY</span>
+                  <span class="range-hint">Airlock Seals</span>
+                </div>
+                <div class="pressure-integrity-badge">
+                  <span class="integrity-pulse"></span>
+                  <span class="integrity-text">CABIN INTEGRITY SECURE</span>
+                </div>
+                <p class="sim-explanation">
+                  Simulated pressure calculated using barometric cabin algorithm. 
+                  No physical hardware pressure transducer installed on ESP32 bus.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 7. USB SERIAL LOG & MISSION CONSOLE -->
+      <!-- ========================================== -->
+      <section class="section-card terminal-section" id="terminal">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <span class="hud-bracket">[</span>
+            <h2>LIVE USB SERIAL MONITOR CONSOLE</h2>
+            <span class="hud-bracket">]</span>
+          </div>
+          <div class="terminal-actions">
+            <label class="terminal-toggle">
+              <input type="checkbox" id="chk-autoscroll" checked>
+              <span>Auto-Scroll</span>
+            </label>
+            <button id="btn-clear-terminal" class="btn btn-sm btn-outline">CLEAR LOG</button>
+          </div>
+        </div>
+
+        <div class="terminal-body" id="terminal-body">
+          <div class="log-line sys">[SYSTEM INITIALIZED] ORVYXA Mission Dashboard Ready.</div>
+          <div class="log-line sys">[USB PROTOCOL] Click "CONNECT ESP32" to select serial port at 115200 Baud.</div>
+          <div class="log-line info">[INFO] ESP32 Serial lines are parsed in real-time to update telemetry gauges.</div>
+        </div>
+
+        <div class="terminal-footer">
+          <div class="term-status-left">
+            <span>PORT: <strong id="term-port-name">DISCONNECTED</strong></span>
+            <span>BAUD: <strong>115200</strong></span>
+            <span>PARITY: <strong>NONE</strong></span>
+            <span>FLOW: <strong>NONE</strong></span>
+          </div>
+          <div class="term-status-right">
+            <span>WEB SERIAL API V1</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER SECTION -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <div class="f-left">
+          <strong>ORVYXA</strong> • Autonomous Spacecraft Monitoring Dashboard
+          <span class="bullet">•</span> Deep Space Mission Telemetry
+        </div>
+        <div class="f-center">
+          Hardware: ESP32 DevKit • DHT11 • INA219 • HC-SR04 • (MPU6050 Fault Fallback)
+        </div>
+        <div class="f-right">
+          Web Serial USB Protocol • 115200 Baud • Zero Cloud/External Dependency
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script src="script.js"></script>
+</body>
+</html>
+
